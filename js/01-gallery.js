@@ -1,40 +1,48 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-const refs = {
-    gallery: document.querySelector(".gallery"),
-};
-  
-const markup = galleryItems.map((item) => {
-    return `<li class="gallery__item">
-    <a class="gallery__link" href="${item.original}">
-    <img class="gallery__image" src="${item.preview}" alt="${item.description}" data-source="${item.original}"/>
-    </a></li>`;
-}).join("");
 
-refs.gallery.innerHTML = markup;
-  
-refs.gallery.addEventListener("click", openModalWindow);
-  
-function openModalWindow(event) {
-    event.preventDefault();
-    if (event.target.nodeName !== "IMG") {
-    return;
+const refs = {
+    gallery: document.querySelector(".gallery"), // знаходжу доступ до самої галереї (ul)
+}
+
+const card = galleryItems.map(({ preview, original, description }) => { // за допомогою методу (map) трансформую масив
+    return `<li class="gallery__item">
+        <a class="gallery__link" href="${original}">
+            <img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}"
+            />
+        </a>
+    </li>`
+}).join("") // з масиву строк або елементів за допомогою методу (join) я роблю одну строку (join сшиваэ все в одну строку)
+
+refs.gallery.innerHTML = card; // за допомогою innerHTML я вставляю в HTML свою картку(card)
+
+refs.gallery.addEventListener("click", openModal) // списку я даю прослуховувача(вішаю івент) з методом (click) и вказую функцію
+
+function openModal(evt) {
+    evt.preventDefault(); // я забороняю виконувати дефолтні дії
+
+    if (evt.target.nodeName !== "IMG") { // кажу якщо на те що ти нажав не є (img), виходь з ф-ції
+        return;
     }
-    const imageUrl = event.target.dataset.source;
-    console.log(imageUrl);
-    const instance = basicLightbox.create(`
-      <img src="${imageUrl}" width="800" height="600">
-    `);
+
+    const imgUrl = evt.target.dataset.source; // роблю змінну в якій буде зберігатися посилання на данну картинку
+    console.log(imgUrl);
+
+    const instance = basicLightbox.create( // за допомогою lightbox я створюю popup з картинкою для появлення 
+        `<img src="${imgUrl}" width="800" height="600">`
+    );
     instance.show();
 
-    const visible = instance.visible();
-
-    document.addEventListener("keydown", closeModalOnEscape);
-    function closeModalOnEscape(event) {
-        if (event.code === "Escape" && visible) {
-        instance.close();
-        document.removeEventListener("keydown", closeModalOnEscape);
+    const visible = instance.visible; // 
+    
+    document.addEventListener("keydown", closeModal) // даю прослуховувача на закриття при натиску на клавішу
+    
+    function closeModal(evt) {
+        if (evt.code === "Escape" && visible) { // якщо клавыша на яку нажав дорывнює (escape) 
+            instance.close(); // робимо закриття картинки
+            document.removeEventListener("keydown", closeModal) // та видаляємо ф-цію (прослуховувача) на закриття 
+            // console.log(visible);
         }
     }
 }
