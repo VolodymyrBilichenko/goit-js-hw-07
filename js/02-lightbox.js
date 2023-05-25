@@ -6,10 +6,10 @@ const refs = {
   };
   
   const markup = galleryItems
-    .map((item) => {
+    .map(({original, preview, description}) => {
       return `<li class="gallery__item">
-        <a class="gallery__link" href="${item.original}">
-        <img class="gallery__image" src="${item.preview}" alt="${item.description}"/>
+        <a class="gallery__link" href="${original}">
+        <img class="gallery__image" src="${preview}" alt="${description}"/>
         </a></li>`;
     }).join("");
     
